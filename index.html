@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Dente - Masa Menüsü</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a3a1a;
+            --primary-light: #2d5a2d;
+            --accent: #c41e3a;
+            --gold: #d4af37;
+            --cream: #faf8f3;
+            --white: #ffffff;
+            --dark: #1a1a1a;
+            --gray: #666;
+            --light-gray: #f0f0f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--cream);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* QR KOD SAYFASI (Baskı için) */
+        .qr-page {
+            display: none;
+            min-height: 100vh;
+            background: var(--primary);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .qr-page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .qr-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .qr-subtitle {
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        #qrcode {
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .qr-instructions {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--light-gray);
+            border-radius: 15px;
+        }
+
+        .qr-instructions h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .qr-instructions p {
+            color: var(--gray);
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .qr-instructions i {
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+
+        .table-number {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .print-btn {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ANA MENÜ SAYFASI */
+        .menu-page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .menu-page.active {
+            display: block;
+        }
+
+        /* HEADER */
+        .menu-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .table-info {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .menu-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-tagline {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        /* KATEGORİLER */
+        .category-nav {
+            background: var(--white);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .category-list {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            min-width: max-content;
+            padding: 0 1rem;
+        }
+
+        .category-tab {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--light-gray);
+            color: var(--gray);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover, .category-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ÜRÜN LİSTESİ */
+        .menu-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .category-section {
+            display: none;
+            margin-bottom: 3rem;
+        }
+
+        .category-section.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .product-item {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .product-item:hover {
+            transform: translateX(10px);
+        }
+
+        .product-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 15px;
+            flex-shrink: 0;
+        }
+
+        .product-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .product-price {
+            font-size: 1.4rem;
+            color: var(--accent);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .product-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .product-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .product-meta i {
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .badge-popular {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-new {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-vegan {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* SEPET */
+        .cart-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(196, 30, 58, 0.4);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--gold);
+            color: var(--dark);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* SEPET PANEL */
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            background: var(--white);
+            z-index: 1000;
+            transition: right 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-panel.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .cart-overlay.open {
+            display: block;
+        }
+
+        .cart-header {
+            padding: 1.5rem;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .cart-footer {
+            padding: 1.5rem;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* GARSON ÇAĞIR */
+        .call-waiter {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(26, 58, 26, 0.4);
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* FOOTER */
+        .menu-footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .wifi-info {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        /* SEÇİCİ EKRAN */
+        .selector-page {
+            display: flex;
+            min-height: 100vh;
+            background: var(--primary);
+            color: white;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .selector-container {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .selector-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .selector-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .selector-btn {
+            padding: 2rem 3rem;
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            min-width: 200px;
+        }
+
+        .selector-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .selector-btn i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        /* QR MASA SEÇİM */
+        .table-selector {
+            margin: 2rem 0;
+        }
+
+        .table-selector label {
+            display: block;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .table-selector select {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            border: none;
+            background: white;
+            color: var(--dark);
+        }
+
+        @media print {
+            .qr-page {
+                display: flex !important;
+                page-break-after: always;
+            }
+            .menu-page, .selector-page {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .product-item {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .product-image {
+                width: 100%;
+                height: 200px;
+            }
+
+            .category-list {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- SEÇİCİ SAYFA -->
+    <div class="selector-page" id="selectorPage">
+        <div class="selector-container">
+            <div class="selector-logo">Al Dente</div>
+            <h2 style="margin-bottom: 2rem; opacity: 0.9;">Dijital Menü Sistemi</h2>
+            
+            <div class="selector-buttons">
+                <button class="selector-btn" onclick="showQRPage()">
+                    <i class="fas fa-qrcode"></i>
+                    QR Kod Oluştur<br>
+                    <small style="font-size: 0.8rem; opacity: 0.7;">(Masa için)</small>
+                </button>
+                <button class="selector-btn" onclick="showMenuPage()">
+                    <i class="fas fa-utensils"></i>
+                    Menüyü Görüntüle<br>
+                    <small style="font-size: 0.8rem; opacity: 0.7;">(Müşteri için)</small>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR KOD SAYFASI (Baskı için) -->
+    <div class="qr-page" id="qrPage">
+        <div class="qr-container">
+            <div class="qr-logo">Al Dente</div>
+            <div class="qr-subtitle">Dijital Menü</div>
+            
+            <div class="table-selector">
+                <label>Masa Numarası Seçin:</label>
+                <select id="tableSelect" onchange="generateQR()">
+                    <option value="1">Masa 1</option>
+                    <option value="2">Masa 2</option>
+                    <option value="3">Masa 3</option>
+                    <option value="4">Masa 4</option>
+                    <option value="5">Masa 5</option>
+                    <option value="6">Masa 6</option>
+                    <option value="7">Masa 7</option>
+                    <option value="8">Masa 8</option>
+                    <option value="9">Masa 9</option>
+                    <option value="10">Masa 10</option>
+                </select>
+            </div>
+
+            <div id="qrcode"></div>
+            
+            <div class="table-number" id="tableNumber">MASA 1</div>
+            
+            <div class="qr-instructions">
+                <h3><i class="fas fa-info-circle"></i> Nasıl Kullanılır?</h3>
+                <p><i class="fas fa-mobile-alt"></i> Telefonunuzun kamerasını açın</p>
+                <p><i class="fas fa-qrcode"></i> QR kodu okutun</p>
+                <p><i class="fas fa-utensils"></i> Menüye göz atın ve sipariş verin</p>
+            </div>
+
+            <button class="print-btn" onclick="window.print()">
+                <i class="fas fa-print"></i> Yazdır / PDF Kaydet
+            </button>
+            
+            <button class="print-btn" onclick="showSelector()" style="background: var(--gray); color: white; margin-top: 1rem;">
+                <i class="fas fa-arrow-left"></i> Geri Dön
+            </button>
+        </div>
+    </div>
+
+    <!-- MENÜ SAYFASI -->
+    <div class="menu-page" id="menuPage">
+        <!-- HEADER -->
+        <div class="menu-header">
+            <div class="table-info" id="tableDisplay">Masa 1</div>
+            <div class="menu-logo">Al Dente</div>
+            <div class="menu-tagline">Fresh Pasta & More</div>
+        </div>
+
+        <!-- KATEGORİLER -->
+        <div class="category-nav">
+            <div class="category-list">
+                <button class="category-tab active" onclick="showCategory('makarna', this)">🍝 Makarnalar</button>
+                <button class="category-tab" onclick="showCategory('pilav', this)">🍚 Pilavlar</button>
+                <button class="category-tab" onclick="showCategory('icecek', this)">🥤 İçecekler</button>
+                <button class="category-tab" onclick="showCategory('ekstra', this)">➕ Ekstralar</button>
+            </div>
+        </div>
+
+        <!-- MENÜ İÇERİK -->
+        <div class="menu-content">
+            <!-- MAKARNALAR -->
+            <div class="category-section active" id="makarna">
+                <h2 class="category-title">Makarnalar</h2>
+                <div id="makarna-list"></div>
+            </div>
+
+            <!-- PİLAVLAR -->
+            <div class="category-section" id="pilav">
+                <h2 class="category-title">Pilavlar</h2>
+                <div id="pilav-list"></div>
+            </div>
+
+            <!-- İÇECEKLER -->
+            <div class="category-section" id="icecek">
+                <h2 class="category-title">İçecekler</h2>
+                <div id="icecek-list"></div>
+            </div>
+
+            <!-- EKSTRALAR -->
+            <div class="category-section" id="ekstra">
+                <h2 class="category-title">Ekstralar</h2>
+                <div id="ekstra-list"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="menu-footer">
+            <div class="wifi-info">
+                <i class="fas fa-wifi"></i> <strong>WiFi:</strong> AlDente_Guest | <strong>Şifre:</strong> lezzet123
+            </div>
+            <p>Bizi tercih ettiğiniz için teşekkür ederiz</p>
+            <p style="margin-top: 0.5rem; opacity: 0.7; font-size: 0.9rem;">
+                <i class="fas fa-phone"></i> 0212 123 45 67 | 
+                <i class="fas fa-map-marker-alt"></i> İstanbul
+            </p>
+        </div>
+    </div>
+
+    <!-- SEPET BUTONU -->
+    <button class="cart-fab" onclick="openCart()">
+        <i class="fas fa-shopping-basket"></i>
+        <span class="cart-count" id="cartCount" style="display: none;">0</span>
+    </button>
+
+    <!-- GARSON ÇAĞIR -->
+    <button class="call-waiter" onclick="callWaiter()" title="Garson Çağır">
+        <i class="fas fa-bell"></i>
+    </button>
+
+    <!-- SEPET PANEL -->
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <span class="cart-title"><i class="fas fa-shopping-basket"></i> Sepetim</span>
+            <button class="cart-close" onclick="closeCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty">
+                <i class="fas fa-shopping-basket" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                <p>Sepetiniz boş</p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Toplam:</span>
+                <span id="cartTotal">0 ₺</span>
+            </div>
+            <button class="order-btn" onclick="placeOrder()">
+                <i class="fas fa-paper-plane"></i> Sipariş Ver
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ÜRÜN VERİLERİ
+        // ==========================================
+
+        const menuData = {
+            makarna: [
+                { id: 1, name: "Alfredo Penne", price: 165, size: "270gr", desc: "Penne makarna, özel krema, tavuk, mantar", image: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400", badge: "", time: "15 dk" },
+                { id: 2, name: "Alfredo Penne Büyük", price: 205, size: "360gr", desc: "Penne, tavuk, mantar, krema, turşu", image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400", badge: "popüler", time: "15 dk" },
+                { id: 3, name: "Köri Soslu Tavuklu", price: 170, size: "270gr", desc: "Penne, özel köri baharatı, tavuk, mantar", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400", badge: "", time: "15 dk" },
+                { id: 4, name: "Pesto Soslu", price: 150, size: "270gr", desc: "Penne, pesto sos, krema, baharatlar", image: "https://images.unsplash.com/photo-1473093295043-c887f21d8c804?w=400", badge: "", time: "15 dk" },
+                { id: 5, name: "Mac & Cheese", price: 180, size: "330gr", desc: "Penne, tavuk, özel mac & cheese sosu", image: "https://images.unsplash.com/photo-1543339494-b4cd4f7ba686?w=400", badge: "popüler", time: "15 dk" },
+                { id: 6, name: "Napoliten Soslu", price: 140, size: "270gr", desc: "Penne, napoliten sos, özel baharatlar", image: "https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=400", badge: "", time: "15 dk" },
+                { id: 7, name: "Arabiata", price: 145, size: "270gr", desc: "Penne, arabiata sos, zeytin", image: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=400", badge: "", time: "15 dk" },
+                { id: 8, name: "Barbekü Soslu", price: 145, size: "270gr", desc: "Penne, özel barbekü sosu", image: "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?w=400", badge: "", time: "15 dk" },
+                { id: 9, name: "Sebzeli Makarna", price: 145, size: "270gr", desc: "Penne, havuç, biber, kabak", image: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=400", badge: "vegan", time: "15 dk" }
+            ],
+            pilav: [
+                { id: 101, name: "Sade Pilav", price: 100, size: "250gr", desc: "Tereyağlı pirinç pilavı", image: "https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=400", badge: "", time: "10 dk" },
+                { id: 102, name: "Tavuklu Pilav", price: 130, size: "Normal", desc: "Pilav, tavuk, garnitür", image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400", badge: "popüler", time: "15 dk" },
+                { id: 103, name: "Nohutlu Pilav", price: 120, size: "Normal", desc: "Pilav, nohut, garnitür", image: "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?w=400", badge: "", time: "15 dk" },
+                { id: 104, name: "Mega Tavuklum", price: 180, size: "Mega", desc: "Pilav, 200gr tavuk, salata", image: "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400", badge: "popüler", time: "15 dk" }
+            ],
+            icecek: [
+                { id: 201, name: "Pepsi", price: 60, size: "330ml", desc: "Buz gibi serinletici", image: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400", badge: "", time: "Hazır" },
+                { id: 202, name: "Ayran", price: 25, size: "175ml", desc: "Ev yapımı ayran", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400", badge: "", time: "Hazır" },
+                { id: 203, name: "Ice Tea", price: 60, size: "330ml", desc: "Limonlu soğuk çay", image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400", badge: "", time: "Hazır" },
+                { id: 204, name: "Su", price: 20, size: "500ml", desc: "Doğal kaynak suyu", image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400", badge: "", time: "Hazır" }
+            ],
+            ekstra: [
+                { id: 301, name: "Ekstra Tavuk", price: 40, size: "50gr", desc: "Izgara tavuk göğsü", image: "https://images.unsplash.com/photo-1604908177453-7462950a6a3b?w=400", badge: "", time: "5 dk" },
+                { id: 302, name: "Mantar", price: 40, size: "50gr", desc: "Taze mantar", image: "https://images.unsplash.com/photo-1504545102780-26774c1bb073?w=400", badge: "", time: "5 dk" },
+                { id: 303, name: "Mısır", price: 20, size: "50gr", desc: "Tatlı mısır", image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400", badge: "", time: "Hazır" }
+            ]
+        };
+
+        // ==========================================
+        // SAYFA YÖNETİMİ
+        // ==========================================
+
+        let currentTable = 1;
+
+        function showSelector() {
+            hideAllPages();
+            document.getElementById('selectorPage').style.display = 'flex';
+        }
+
+        function showQRPage() {
+            hideAllPages();
+            document.getElementById('qrPage').classList.add('active');
+            generateQR();
+        }
+
+        function showMenuPage() {
+            hideAllPages();
+            document.getElementById('menuPage').classList.add('active');
+            renderMenu();
+            
+            // URL'den masa numarası al
+            const urlParams = new URLSearchParams(window.location.search);
+            const table = urlParams.get('masa') || '1';
+            currentTable = table;
+            document.getElementById('tableDisplay').textContent = 'Masa ' + table;
+        }
+
+        function hideAllPages() {
+            document.getElementById('selectorPage').style.display = 'none';
+            document.getElementById('qrPage').classList.remove('active');
+            document.getElementById('menuPage').classList.remove('active');
+        }
+
+        // ==========================================
+        // QR KOD
+        // ==========================================
+
+        let qrCode = null;
+
+        function generateQR() {
+            const table = document.getElementById('tableSelect').value;
+            currentTable = table;
+            document.getElementById('tableNumber').textContent = 'MASA ' + table;
+            
+            // QR kod için URL oluştur
+            const currentUrl = window.location.href.split('?')[0];
+            const menuUrl = currentUrl + '?masa=' + table;
+            
+            // Eski QR kodu temizle
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            // Yeni QR kod oluştur
+            qrCode = new QRCode(qrContainer, {
+                text: menuUrl,
+                width: 250,
+                height: 250,
+                colorDark: '#1a3a1a',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // ==========================================
+        // MENÜ RENDER
+        // ==========================================
+
+        function renderMenu() {
+            Object.keys(menuData).forEach(category => {
+                const container = document.getElementById(category + '-list');
+                container.innerHTML = menuData[category].map(item => `
+                    <div class="product-item">
+                        <img src="${item.image}" class="product-image" onerror="this.src='https://via.placeholder.com/120'">
+                        <div class="product-details">
+                            <div class="product-header">
+                                <div>
+                                    <span class="product-name">${item.name}</span>
+                                    ${item.badge ? `<span class="badge badge-${item.badge}">${item.badge}</span>` : ''}
+                                </div>
+                                <span class="product-price">${item.price} ₺</span>
+                            </div>
+                            <div class="product-desc">${item.desc}</div>
+                            <div class="product-meta">
+                                <span><i class="fas fa-weight-hanging"></i> ${item.size}</span>
+                                <span><i class="fas fa-clock"></i> ${item.time}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        function showCategory(category, btn) {
+            document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+            
+            btn.classList.add('active');
+            document.getElementById(category).classList.add('active');
+        }
+
+        // ==========================================
+        // SEPET (Basitleştirilmiş)
+        // ==========================================
+
+        let cart = [];
+
+        function openCart() {
+            document.getElementById('cartOverlay').classList.add('open');
+            document.getElementById('cartPanel').classList.add('open');
+            renderCart();
+        }
+
+        function closeCart() {
+            document.getElementById('cartOverlay').classList.remove('open');
+            document.getElementById('cartPanel').classList.remove('open');
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="cart-empty">
+                        <i class="fas fa-shopping-basket" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <p>Sepetiniz boş</p>
+                        <p style="font-size: 0.9rem; margin-top: 1rem;">Menüden ürün seçebilirsiniz</p>
+                    </div>
+                `;
+                document.getElementById('cartFooter').style.display = 'none';
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            container.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.image}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/70'">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${item.size}</div>
+                        <div class="cart-item-price">${(item.price * item.quantity).toLocaleString()} ₺</div>
+                        <div class="quantity-control">
+                            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="cart-item-remove" onclick="removeItem(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            document.getElementById('cartTotal').textContent = total.toLocaleString() + ' ₺';
+            document.getElementById('cartFooter').style.display = 'block';
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) removeItem(id);
+                else updateCart();
+            }
+        }
+
+        function removeItem(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCart();
+        }
+
+        function updateCart() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartCount');
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+            renderCart();
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) return;
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const items = cart.map(i => `${i.name} x${i.quantity}`).join(', ');
+            
+            // WhatsApp mesajı oluştur
+            const message = `Masa ${currentTable} Sipariş:\n${items}\nToplam: ${total} ₺`;
+            const whatsappUrl = `https://wa.me/905321234567?text=${encodeURIComponent(message)}`;
+            
+            alert(`Siparişiniz alındı!\n\n${items}\nToplam: ${total} ₺\n\nGarsonunuza bildirildi.`);
+            
+            cart = [];
+            updateCart();
+            closeCart();
+        }
+
+        function callWaiter() {
+            alert(`Masa ${currentTable} garson çağrısı yapıldı!`);
+        }
+
+        // ==========================================
+        // BAŞLATMA
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // URL'den parametre kontrol et
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.has('masa')) {
+                // Müşteri modu - direkt menü
+                showMenuPage();
+            } else {
+                // Seçici ekran
+                showSelector();
+            }
+        });
+
+        // ESC ile kapatma
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCart();
+        });
+    </script>
+
+</body>
+</html>
